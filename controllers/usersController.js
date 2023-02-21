@@ -157,7 +157,7 @@ const updateMeetings = async (req, res) => {
   const sub = req.params.id;
 
   try {
-    const user = await User.findOne({ sub });
+    const user = await User.findOne({ _id: sub });
     user.meetings.push(req.body);
     await user.save();
     res.status(204).end();

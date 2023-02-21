@@ -38,8 +38,8 @@ app.use(
 );
 
 app.use('/api/user', userRouter);
-app.use('/api/availability', auth, availabilityRouter);
-app.use('/api/appointments', auth, appointmentRouter);
+app.use('/api/appointments', appointmentRouter);
+app.use('/api/availability', availabilityRouter);
 app.use('/api/subscription', auth, subscriptionRouter);
 
 app.get('*', (req, res) => {

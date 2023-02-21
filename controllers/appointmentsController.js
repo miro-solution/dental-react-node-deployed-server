@@ -1,7 +1,5 @@
 const Appointment = require('../models/Appointment');
 const User = require('../models/User');
-const { emailUserNewAppt } = require('../utils/emailHelper.js');
-const { insertEvent, deleteEvent } = require('../utils/gcalHelper.js');
 const moment = require('moment-timezone');
 
 const create = async (req, res) => {
@@ -25,41 +23,24 @@ const create = async (req, res) => {
     const eventTime = `${moment(apptTime).tz(user.timezone).format('h:mma - dddd, MMMM Do YYYY')}
     (${user.timezone.replace('_', ' ')} GMT${moment.tz(user.timezone).format('Z')})`;
     try {
-      const googleEventData = await insertEvent(
-        user.access_token,
-        user.refresh_token,
-        apptTime,
-        endTime,
-        user.timezone,
-        meetingName,
-        guestEmail,
-        guestName,
-        guestComment,
-        url,
-      );
-
-      newAppointment.googleId = googleEventData.id;
-
       await newAppointment.save();
 
-      await emailUserNewAppt(
-        user.email,
-        user.given_name,
-        guestName,
-        guestEmail,
-        guestTz.replace('_', ' '),
-        guestComment,
-        meetingName,
-        eventTime,
-      );
+      // await emailUserNewAppt(
+      //   user.email,
+      //   user.given_name,
+      //   guestName,
+      //   guestEmail,
+      //   guestTz.replace('_', ' '),
+      //   guestComment,
+      //   meetingName,
+      //   eventTime,
+      // );
 
       res.status(201).send('New event created');
     } catch (err) {
-      console.error(err);
       res.status(500).json(err);
     }
   } catch (err) {
-    console.error(err);
     res.status(400).json(err);
   }
 };
@@ -67,10 +48,6 @@ const create = async (req, res) => {
 const cancel = async (req, res) => {
   try {
     const apt = await Appointment.findOne({ _id: req.params.id });
-    const user = await User.findOne({ _id: apt.user });
-
-    deleteEvent(user.access_token, user.refresh_token, apt.googleId);
-    //remove from google calendar
     apt.delete();
     res.status(200).send('deleted');
   } catch (err) {

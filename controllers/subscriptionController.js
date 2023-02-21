@@ -5,7 +5,7 @@ const subscription = async (req, res) => {
   const sub = req.params.id;
 
   try {
-    const user = await User.findOne({ sub });
+    const user = await User.findOne({ _id: sub });
 
     //create customer
     const customer = await stripe.customers.create({
@@ -24,7 +24,7 @@ const subscription = async (req, res) => {
     //create subscription
     const subscription = await stripe.subscriptions.create({
       customer: customer.id,
-      items: [{ plan: 'plan_H80WbQZGMMAEE7' }],
+      items: [{ price: 'price_1MdnLGLFoSBPD4vpXNcrNC3A' }],
       expand: ['latest_invoice.payment_intent'],
     });
 

@@ -37,7 +37,6 @@ const appointmentSchema = new Schema({
   },
   googleId: {
     type: String,
-    required: true,
   },
 });
 
