@@ -33,13 +33,13 @@ const userRegister = async (req, res) => {
 
     // Validate user input
     if (!(email && password && name)) {
-      res.status(400).send('All input is required');
+      res.status(400).send('Alle Eingaben sind erforderlich.');
     }
 
     const oldUser = await User.findOne({ email });
 
     if (oldUser) {
-      return res.status(409).send('User Already Exist. Please Login');
+      return res.status(409).send('Benutzer existiert bereits. Bitte loggen Sie sich ein.');
     }
 
     //Encrypt user password
@@ -75,7 +75,7 @@ const userLogin = async (req, res) => {
     const { email, password } = req.body;
     // Validate user input
     if (!(email && password)) {
-      res.status(400).send('All input is required');
+      res.status(400).send('Alle Eingaben sind erforderlich');
     }
     // Validate if user exist in our database
     const user = await User.findOne({ email });
@@ -92,7 +92,7 @@ const userLogin = async (req, res) => {
       // user
       res.status(201).json(user);
     }
-    res.status(400).send('Invalid Credentials');
+    res.status(400).send('Ungültige Anmeldeinformationen');
   } catch (err) {
     console.log(err);
   }

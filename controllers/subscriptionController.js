@@ -38,7 +38,7 @@ const unsubscribe = async (req, res) => {
   const sub = req.params.id;
 
   try {
-    const user = await User.findOne({ sub });
+    const user = await User.findOne({ _id: sub });
 
     const subscriptions = await stripe.subscriptions.list({
       customer: user.customerId,
