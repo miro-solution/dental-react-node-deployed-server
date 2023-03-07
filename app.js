@@ -8,6 +8,7 @@ const storeOptions = require('./config/storeOptions');
 const logger = require('morgan');
 const userRouter = require('./routes/users');
 const appointmentRouter = require('./routes/appointments');
+const appointmentTypeRouter = require('./routes/appointmentType');
 const availabilityRouter = require('./routes/availability');
 const subscriptionRouter = require('./routes/subscription');
 const auth = require('./utils/auth');
@@ -39,6 +40,8 @@ app.use(
 
 app.use('/api/user', userRouter);
 app.use('/api/appointments', appointmentRouter);
+app.use('/api/appointmenttype', appointmentTypeRouter);
+
 app.use('/api/availability', availabilityRouter);
 app.use('/api/subscription', auth, subscriptionRouter);
 

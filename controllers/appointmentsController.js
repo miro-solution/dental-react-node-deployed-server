@@ -1,9 +1,21 @@
 const Appointment = require('../models/Appointment');
+const AppointmentType = require('../models/AppointmentType');
 const User = require('../models/User');
 const moment = require('moment-timezone');
 
 const create = async (req, res) => {
-  const { guestName, guestEmail, guestComment, guestTz, meetingName, meetTime, apptTime, url } = req.body;
+  const {
+    guestName,
+    guestEmail,
+    guestComment,
+    guestTz,
+    meetingName,
+    meetTime,
+    apptTime,
+    url,
+    dentist,
+    eventSchedule,
+  } = req.body;
   const endTime = moment(apptTime).add(meetTime, 'm').format();
 
   try {
@@ -19,6 +31,8 @@ const create = async (req, res) => {
       meetingName: meetingName,
       meetTime: meetTime,
       apptTime: apptTime,
+      dentist: dentist,
+      eventSchedule: eventSchedule,
     });
     const eventTime = `${moment(apptTime).tz(user.timezone).format('h:mma - dddd, MMMM Do YYYY')}
     (${user.timezone.replace('_', ' ')} GMT${moment.tz(user.timezone).format('Z')})`;
@@ -57,7 +71,11 @@ const cancel = async (req, res) => {
 
 const userIndex = async (req, res) => {
   try {
-    const resp = await Appointment.find({ user: req.params.user_id });
+    const resp = await Appointment.find({ user: req.params.user_id })
+      .populate('meetingName')
+      .populate('dentist')
+      .populate('eventSchedule');
+
     //sort resp by apptTime
     resp.sort((a, b) => {
       return a.apptTime - b.apptTime;
@@ -86,4 +104,60 @@ const userIndex = async (req, res) => {
   }
 };
 
-module.exports = { create, userIndex, cancel };
+const readAppointmentTypes = async (req, res) => {
+  const subscribe = req.query.subscribe;
+  console.log(subscribe, '+++++++++');
+  try {
+    if (subscribe === 'a') {
+      const allAppointmentTypes = await AppointmentType.find({});
+      res.status(200).send({ docs: allAppointmentTypes });
+    } else if (subscribe === 't') {
+      const allAppointmentTypes = await AppointmentType.find({ subscribe: true });
+      res.status(200).send({ docs: allAppointmentTypes });
+    } else if (subscribe === 'f') {
+      const allAppointmentTypes = await AppointmentType.find({ subscribe: false });
+      res.status(200).send({ docs: allAppointmentTypes });
+    }
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
+const createAppointmentType = async (req, res) => {
+  const newAppointmentType = AppointmentType(req.body);
+  try {
+    await newAppointmentType.save();
+
+    res.status(201).json({ message: 'New AppointmentType Created', doc: newAppointmentType });
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
+const updateAppointmentType = async (req, res) => {
+  try {
+    const update = await AppointmentType.findByIdAndUpdate(
+      { _id: req.params._id, subscribe: req.body.subscribe, title: req.body.title },
+      { new: true },
+    );
+    res.status(200).json({ doc: update });
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
+const deleteAppointmentType = async (req, res) => {
+  try {
+    await AppointmentType.findByIdAndRemove({ _id: req.params._id });
+    res.status(200).send('Success in delete');
+  } catch (err) {
+    res.status(400).json(err);
+  }
+};
+
+module.exports = {
+  create,
+  userIndex,
+  cancel,
+  readAppointmentTypes,
+  createAppointmentType,
+  updateAppointmentType,
+  deleteAppointmentType,
+};
