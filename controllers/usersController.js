@@ -104,7 +104,7 @@ const userLogin = async (req, res) => {
 };
 const readUsers = async (req, res) => {
   try {
-    const users = await User.find({}, { fullName: 1, _id: 1 }).populate('meetings.meetingName');
+    const users = await User.find({}, { fullName: 1, _id: 1, phone: 1 }).populate('meetings.meetingName');
     // const result = user.populate('meetings.meetingName');
     // console.log(user);
     res.status(200).json({ docs: users });
@@ -284,7 +284,6 @@ const updateMeetings = async (req, res) => {
       const updatedUser = await User.findOne({ _id: sub }).populate('meetings.meetingName');
       res.status(200).json({ docs: updatedUser.meetings });
     } else if (isOnly.length === 1) {
-
     } else {
       res.status(403).send('Meeting Duplicate');
     }

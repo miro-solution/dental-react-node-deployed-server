@@ -104,6 +104,24 @@ const userIndex = async (req, res) => {
   }
 };
 
+const userIndexForScheduleView = async (req, res) => {
+  try {
+    const resp = await Appointment.find({ user: req.params.user_id })
+      .populate('meetingName')
+      .populate('dentist')
+      .populate('eventSchedule');
+
+    //sort resp by apptTime
+    resp.sort((a, b) => {
+      return a.apptTime - b.apptTime;
+    });
+
+    res.status(200).json(resp);
+  } catch (err) {
+    res.status(400).json({ Error: 'User does not exist' });
+  }
+};
+
 const readAppointmentTypes = async (req, res) => {
   const subscribe = req.query.subscribe;
   console.log(subscribe, '+++++++++');
@@ -160,4 +178,5 @@ module.exports = {
   createAppointmentType,
   updateAppointmentType,
   deleteAppointmentType,
+  userIndexForScheduleView
 };
