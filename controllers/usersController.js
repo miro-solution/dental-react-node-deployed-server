@@ -54,7 +54,7 @@ const userRegister = async (req, res) => {
       password: encryptedPassword,
       subscriber: false,
       role: 'user',
-      // meetings: { meetingName: '60 minute meeting', duration: 60 },
+      meetings: [{ meetingName: '60 minute meeting', duration: 60 }],
     });
 
     // Create token
@@ -82,8 +82,7 @@ const userLogin = async (req, res) => {
       res.status(400).send('Alle Eingaben sind erforderlich');
     }
     // Validate if user exist in our database
-    const user = await User.findOne({ email }).populate('meetings.meetingName');
-    console.log(user);
+    const user = await User.findOne({ email });
 
     if (user && (await bcrypt.compare(password, user.password))) {
       // Create token
@@ -104,7 +103,7 @@ const userLogin = async (req, res) => {
 };
 const readUsers = async (req, res) => {
   try {
-    const users = await User.find({}, { fullName: 1, _id: 1, phone: 1 }).populate('meetings.meetingName');
+    const users = await User.find({}, { fullName: 1, _id: 1, phone: 1 });
     // const result = user.populate('meetings.meetingName');
     // console.log(user);
     res.status(200).json({ docs: users });
@@ -118,24 +117,7 @@ const getUser = async (req, res) => {
   const sub = req.params.id;
 
   try {
-    const user = await User.findOne(
-      { _id: sub },
-      {
-        _id: true,
-        fullName: true,
-        email: true,
-        phone: true,
-        meetings: true,
-        url: true,
-        timezone: true,
-        availability: true,
-        calendars: true,
-        role: true,
-        subscriber: true,
-      },
-    ).populate('meetings.meetingName');
-    // const result = user.populate('meetings.meetingName');
-    console.log(user);
+    const user = await User.findOne({ _id: sub });
     res.status(200).json(user);
   } catch (err) {
     console.error(err);
@@ -147,25 +129,9 @@ const getUserByUrl = async (req, res) => {
   const userUrl = req.params.url;
 
   try {
-    const user = await User.findOne(
-      { url: userUrl },
-      {
-        _id: true,
-        fullName: true,
-        email: true,
-        phone: true,
-        meetings: true,
-        url: true,
-        timezone: true,
-        availability: true,
-        calendars: true,
-        role: true,
-        subscriber: true,
-      },
-    ).populate('meetings.meetingName');
+    const user = await User.findOne({ url: userUrl });
     res.status(200).json(user);
   } catch (err) {
-    console.error(err);
     res.status(400).send(err);
   }
 };
@@ -187,12 +153,7 @@ const updateUser = async (req, res) => {
 
   try {
     const user = await User.findOne({ _id: sub });
-    console.log(req.body);
     user.url = req.body.url;
-    user.meetings.push({
-      meetingName: req.body.defaultMeeting,
-      duraton: 60,
-    });
     user.availability.hours = req.body.hours;
     user.timezone = req.body.timeZone;
     user.availability.days = req.body.days;
@@ -240,10 +201,9 @@ const createMeetings = async (req, res) => {
     if (isOnly.length === 0) {
       user.meetings.push(req.body);
       await user.save();
-      newUser = await User.findOne({ _id: sub }).populate('meetings.meetingName');
-      console.log('---');
+      newUser = await User.findOne({ _id: sub });
       res.status(200).json({ docs: newUser.meetings });
-    } else res.status(403).send('Meeting Duplicate');
+    } else res.status(400).send('Meeting Duplicate');
   } catch (err) {
     console.error(err);
     res.status(400).send(err);
@@ -259,7 +219,7 @@ const deleteMeetings = async (req, res) => {
 
     // user={...user,user.meetings:meetings}
     await user.save();
-    const deletedUser = await User.findOne({ _id: sub }).populate('meetings.meetingName');
+    const deletedUser = await User.findOne({ _id: sub });
     res.status(200).json({ docs: deletedUser.meetings });
   } catch (err) {
     console.log(err);
@@ -281,7 +241,7 @@ const updateMeetings = async (req, res) => {
       );
 
       await user.save();
-      const updatedUser = await User.findOne({ _id: sub }).populate('meetings.meetingName');
+      const updatedUser = await User.findOne({ _id: sub });
       res.status(200).json({ docs: updatedUser.meetings });
     } else if (isOnly.length === 1) {
     } else {

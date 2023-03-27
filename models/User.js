@@ -56,12 +56,7 @@ const userSchema = new Schema({
   calendars: {
     type: Array,
   },
-  meetings: [
-    {
-      duration: { type: Number, default: 60 },
-      meetingName: { type: Schema.Types.ObjectId, ref: 'AppointmentType', required: true },
-    },
-  ],
+  meetings: [{ duration: Number, meetingName: String }],
   role: {
     type: String,
     default: 'user',

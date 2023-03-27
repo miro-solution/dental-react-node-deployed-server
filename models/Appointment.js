@@ -24,8 +24,7 @@ const appointmentSchema = new Schema({
     required: true,
   },
   meetingName: {
-    type: Schema.Types.ObjectId,
-    ref: 'AppointmentType',
+    type: String,
     required: true,
   },
   meetTime: {
@@ -40,7 +39,7 @@ const appointmentSchema = new Schema({
     type: String,
   },
   dentist: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-  eventSchedule: { type: Schema.Types.ObjectId, ref: 'AppointmentType', required: true },
+  // eventSchedule: { type: Schema.Types.ObjectId, ref: 'AppointmentType', required: true },
 });
 
 const Appointment = mongoose.model('Appointment', appointmentSchema);

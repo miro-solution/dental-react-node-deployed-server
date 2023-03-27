@@ -32,7 +32,6 @@ const create = async (req, res) => {
       meetTime: meetTime,
       apptTime: apptTime,
       dentist: dentist,
-      eventSchedule: eventSchedule,
     });
     const eventTime = `${moment(apptTime).tz(user.timezone).format('h:mma - dddd, MMMM Do YYYY')}
     (${user.timezone.replace('_', ' ')} GMT${moment.tz(user.timezone).format('Z')})`;
@@ -71,10 +70,7 @@ const cancel = async (req, res) => {
 
 const userIndex = async (req, res) => {
   try {
-    const resp = await Appointment.find({ user: req.params.user_id })
-      .populate('meetingName')
-      .populate('dentist')
-      .populate('eventSchedule');
+    const resp = await Appointment.find({ user: req.params.user_id }).populate('dentist');
 
     //sort resp by apptTime
     resp.sort((a, b) => {
@@ -106,10 +102,7 @@ const userIndex = async (req, res) => {
 
 const userIndexForScheduleView = async (req, res) => {
   try {
-    const resp = await Appointment.find({ user: req.params.user_id })
-      .populate('meetingName')
-      .populate('dentist')
-      .populate('eventSchedule');
+    const resp = await Appointment.find({ user: req.params.user_id }).populate('dentist');
 
     //sort resp by apptTime
     resp.sort((a, b) => {
@@ -178,5 +171,5 @@ module.exports = {
   createAppointmentType,
   updateAppointmentType,
   deleteAppointmentType,
-  userIndexForScheduleView
+  userIndexForScheduleView,
 };
