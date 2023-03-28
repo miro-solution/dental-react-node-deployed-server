@@ -76,7 +76,6 @@ const userLogin = async (req, res) => {
   try {
     // Get user input
     const { email, password } = req.body;
-    console.log(req.body);
     // Validate user input
     if (!(email && password)) {
       res.status(400).send('Alle Eingaben sind erforderlich');
@@ -95,10 +94,11 @@ const userLogin = async (req, res) => {
 
       // user
       res.status(201).json(user);
+    } else {
+      res.status(400).send('Ungültige Anmeldeinformationen');
     }
-    res.status(400).send('Ungültige Anmeldeinformationen');
   } catch (err) {
-    console.log(err);
+    res.status(400).send('Ungültige Anmeldeinformationen');
   }
 };
 const readUsers = async (req, res) => {
