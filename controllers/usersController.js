@@ -74,7 +74,7 @@ const resetPassword = async (req, res) => {
   try {
     const userId = req.user._id;
     const user = await User.findOne({ _id: userId });
-    const encryptedPassword = await bcrypt.hash(req.body.password, 10);
+    encryptedPassword = await bcrypt.hash(req.body.password, 10);
     user.password = encryptedPassword;
     await user.save();
     res.status(200).json({ success: true });
@@ -100,7 +100,7 @@ const userRegister = async (req, res) => {
     }
 
     //Encrypt user password
-    const encryptedPassword = await bcrypt.hash(password, 10);
+    encryptedPassword = await bcrypt.hash(password, 10);
 
     // Create user in our database
     const user = await User.create({
