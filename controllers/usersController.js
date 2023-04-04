@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 
 const config = process.env;
 const User = require('../models/User');
-const SendEmail = require('../config/sendEmail');
+const sendEmail = require('../config/sendEmail');
 //function to verify token
 async function verifyToken(token) {
   try {
@@ -42,7 +42,7 @@ const emailVerify = async (req, res) => {
     await user.save();
     console.log(verificationCode);
 
-    await SendEmail.sendEmailUsingSendPulse(
+    await sendEmail.sendEmailUsingSendPulse(
       [{ name: user.name, email: user.email }],
       // [{ name: 'yuanmai', email: 'yuanmai212@gmail.com' }],
       'Email Verification Code',
