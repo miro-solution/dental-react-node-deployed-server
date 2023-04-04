@@ -43,7 +43,7 @@ const emailVerify = async (req, res) => {
     console.log(verificationCode);
 
     await SendEmail.sendEmailUsingSendPulse(
-      [{ name: user?.name, email: user.email }],
+      [{ name: user.name, email: user.email }],
       // [{ name: 'yuanmai', email: 'yuanmai212@gmail.com' }],
       'Email Verification Code',
       verificationCode,
