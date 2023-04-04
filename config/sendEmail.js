@@ -1,5 +1,6 @@
 const axios = require('axios');
-async function getEmailToken() {
+
+const getEmailToken = async () => {
   try {
     const clientId = process.env.CLIENT_ID;
     const clientSecret = process.env.CLIENT_SECRET;
@@ -13,9 +14,9 @@ async function getEmailToken() {
   } catch (e) {
     console.log(e);
   }
-}
+};
 
-async function sendEmailUsingSendPulse(recipients, subject, contents, templateId) {
+const sendEmailUsingSendPulse = async (recipients, subject, contents, templateId) => {
   try {
     const accessToken = await getEmailToken();
     // recipients = [
@@ -45,5 +46,6 @@ async function sendEmailUsingSendPulse(recipients, subject, contents, templateId
   } catch (error) {
     console.error('Human:SendPulse API Error:', error.message);
   }
-}
+};
+
 module.exports = { sendEmailUsingSendPulse, getEmailToken };
