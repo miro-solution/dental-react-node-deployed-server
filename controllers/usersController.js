@@ -1,8 +1,10 @@
 const _ = require('lodash');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
 
+const config = process.env;
+const User = require('../models/User');
+const SendEmail = require('../config/sendEmail');
 //function to verify token
 async function verifyToken(token) {
   try {
@@ -25,7 +27,61 @@ async function verifyToken(token) {
     console.error(err);
   }
 }
+const emailVerify = async (req, res) => {
+  const verificationCode = Math.floor(Math.random() * 9000) + 1000;
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    const token = jwt.sign({ user_id: user._id, verificationCode: verificationCode }, process.env.TOKEN_KEY, {
+      expiresIn: '10min',
+    });
+    const tokenById = jwt.sign({ _id: user._id }, process.env.TOKEN_KEY, {
+      expiresIn: '10min',
+    });
+    const templateId = '113dacd4daa21b23d8b21b8b7ee56287';
+    user.verificationCode = token;
+    await user.save();
+    console.log(verificationCode);
 
+    await SendEmail.sendEmailUsingSendPulse(
+      [{ name: user?.name, email: user.email }],
+      // [{ name: 'yuanmai', email: 'yuanmai212@gmail.com' }],
+      'Email Verification Code',
+      verificationCode,
+      templateId,
+    );
+    res.status(200).json({ doc: { success: true, token: tokenById } });
+  } catch (err) {
+    res.status(404).json({ success: false });
+  }
+};
+const checkVerificationCode = async (req, res) => {
+  console.log(req.user);
+  try {
+    const userId = req.user._id;
+    const user = await User.findOne({ _id: userId });
+    const decoded = jwt.verify(user.verificationCode, config.TOKEN_KEY);
+    console.log(decoded.verificationCode, req.body.code);
+    if (parseInt(decoded.verificationCode) === parseInt(req.body.code)) {
+      res.status(200).json({ success: true });
+    } else {
+      res.status(404).send('Ungültige Anmeldeinformationen');
+    }
+  } catch (err) {
+    res.status(400).send('Ungültige Anmeldeinformationen');
+  }
+};
+const resetPassword = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const user = await User.findOne({ _id: userId });
+    encryptedPassword = await bcrypt.hash(req.body.password, 10);
+    user.password = encryptedPassword;
+    await user.save();
+    res.status(200).json({ success: true });
+  } catch (err) {
+    res.status(400).send('Ungültige Anmeldeinformationen');
+  }
+};
 const userRegister = async (req, res) => {
   try {
     // Get user input
@@ -54,7 +110,7 @@ const userRegister = async (req, res) => {
       password: encryptedPassword,
       subscriber: false,
       role: 'user',
-      meetings: [{ meetingName: '60 minute meeting', duration: 60 }],
+      meetings: [{ meetingName: '60min meeting', duration: 60 }],
     });
 
     // Create token
@@ -197,13 +253,13 @@ const createMeetings = async (req, res) => {
 
   try {
     const user = await User.findOne({ _id: sub });
-    const isOnly = user.meetings.filter((meeting) => meeting.meetingName == req.body.meetingName);
-    if (isOnly.length === 0) {
-      user.meetings.push(req.body);
-      await user.save();
-      newUser = await User.findOne({ _id: sub });
-      res.status(200).json({ docs: newUser.meetings });
-    } else res.status(400).send('Meeting Duplicate');
+    // const isOnly = user.meetings.filter((meeting) => meeting.meetingName == req.body.meetingName);
+    // if (isOnly.length === 0) {
+    user.meetings.push(req.body);
+    await user.save();
+    newUser = await User.findOne({ _id: sub });
+    res.status(200).json({ docs: newUser.meetings });
+    // } else res.status(400).send('Meeting Duplicate');
   } catch (err) {
     console.error(err);
     res.status(400).send(err);
@@ -265,4 +321,7 @@ module.exports = {
   updateMeetings,
   deleteMeetings,
   AfterUpdateProfile,
+  emailVerify,
+  resetPassword,
+  checkVerificationCode,
 };

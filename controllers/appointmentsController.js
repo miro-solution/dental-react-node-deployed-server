@@ -3,9 +3,11 @@ const AppointmentType = require('../models/AppointmentType');
 const User = require('../models/User');
 const moment = require('moment-timezone');
 
+const SendEmail = require('../config/sendEmail');
 const create = async (req, res) => {
   const {
-    guestName,
+    guestFirstName,
+    guestLastName,
     guestEmail,
     guestComment,
     guestTz,
@@ -14,8 +16,11 @@ const create = async (req, res) => {
     apptTime,
     url,
     dentist,
-    eventSchedule,
+    guestBirthday,
+    guestAgreeRule,
+    guestPatientType,
   } = req.body;
+  console.log(req.body);
   const endTime = moment(apptTime).add(meetTime, 'm').format();
 
   try {
@@ -24,10 +29,14 @@ const create = async (req, res) => {
     const newAppointment = new Appointment({
       user: user._id,
       userTz: user.timezone,
-      guestName: guestName,
+      guestFirstName: guestFirstName,
+      guestLastName: guestLastName,
+      guestBirthday: guestBirthday,
+      guestAgreeRule: guestAgreeRule,
       guestEmail: guestEmail,
       guestComment: guestComment,
       guestTz: guestTz,
+      guestPatientType: guestPatientType,
       meetingName: meetingName,
       meetTime: meetTime,
       apptTime: apptTime,
@@ -163,6 +172,34 @@ const deleteAppointmentType = async (req, res) => {
   }
 };
 
+const blockSchedules = async (req, res) => {
+  const userId = req.body.userId;
+  const scheduleIds = req.body.schduleIds ? req.body.schduleIds : [];
+  const content = req.body.content;
+  const Sender = await User.findOne({ _id: userId });
+  const queryPromises = scheduleIds?.map((id) => {
+    const A = Appointment.findOne({ _id: id })
+      .exec()
+      .then((res) => {
+        return { name: res.guestFirstName, email: res.guestEmail };
+      });
+    return A;
+  });
+  const recipients = await Promise.all(queryPromises);
+
+  const subject = `Cancelled Schedule`;
+
+  const query = { _id: { $in: scheduleIds } };
+  const templateId = '46ad4818b89153e76347eac8355ab9d8';
+  try {
+    await SendEmail.sendEmailUsingSendPulse(recipients, subject, content, templateId);
+    await Appointment.deleteMany(query);
+    res.status(200).json({ success: true });
+  } catch (err) {
+    res.status(404).json();
+  }
+};
+
 module.exports = {
   create,
   userIndex,
@@ -172,4 +209,5 @@ module.exports = {
   updateAppointmentType,
   deleteAppointmentType,
   userIndexForScheduleView,
+  blockSchedules,
 };

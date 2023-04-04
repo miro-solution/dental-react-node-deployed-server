@@ -56,11 +56,34 @@ const userSchema = new Schema({
   calendars: {
     type: Array,
   },
-  meetings: [{ duration: Number, meetingName: String }],
+  // meetings: [{ duration: Number, meetingName: String }],
+  meetings: [
+    {
+      duration: { type: Number },
+      repeat: { tyep: Number },
+      startDate: { type: String },
+      startTime: { type: String },
+      endTime: { type: String },
+      endDate: { type: String },
+      meetingName: { type: String },
+      expiredTime: { type: Number },
+      allDay: { type: Boolean },
+      days: {
+        Monday: { type: Boolean, default: true },
+        Tuesday: { type: Boolean, default: true },
+        Wednesday: { type: Boolean, default: true },
+        Thursday: { type: Boolean, default: true },
+        Friday: { type: Boolean, default: true },
+        Saturday: { type: Boolean, default: false },
+        Sunday: { type: Boolean, default: false },
+      },
+    },
+  ],
   role: {
     type: String,
     default: 'user',
   },
+  verificationCode: { type: String },
 });
 
 const User = mongoose.model('User', userSchema);

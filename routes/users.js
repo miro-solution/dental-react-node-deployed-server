@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const usersController = require('../controllers/usersController');
-
+const auth = require('../utils/auth');
 //need text middleware to parse plain text token
 router.post('/login', express.text(), usersController.userLogin);
 router.post('/register', express.text(), usersController.userRegister);
@@ -24,5 +24,9 @@ router.put('/afterprofile/:id', usersController.AfterUpdateProfile);
 router.post('/meetings/:id', usersController.createMeetings);
 router.put('/meetings', usersController.updateMeetings);
 router.delete('/meetings', usersController.deleteMeetings);
+
+router.post('/email_verify', usersController.emailVerify);
+router.post('/check_email_verification_code', auth, usersController.checkVerificationCode);
+router.post('/reset-pass', auth, usersController.resetPassword);
 
 module.exports = router;

@@ -8,7 +8,15 @@ const appointmentSchema = new Schema({
     type: String,
     required: true,
   },
-  guestName: {
+  guestFirstName: {
+    type: String,
+    required: true,
+  },
+  guestLastName: {
+    type: String,
+    required: true,
+  },
+  guestBirthday: {
     type: String,
     required: true,
   },
