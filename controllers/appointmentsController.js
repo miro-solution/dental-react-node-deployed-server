@@ -177,7 +177,7 @@ const blockSchedules = async (req, res) => {
   const scheduleIds = req.body.schduleIds ? req.body.schduleIds : [];
   const content = req.body.content;
   const Sender = await User.findOne({ _id: userId });
-  const queryPromises = scheduleIds?.map((id) => {
+  const queryPromises = scheduleIds.map((id) => {
     const A = Appointment.findOne({ _id: id })
       .exec()
       .then((res) => {
