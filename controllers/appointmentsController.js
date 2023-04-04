@@ -3,7 +3,7 @@ const AppointmentType = require('../models/AppointmentType');
 const User = require('../models/User');
 const moment = require('moment-timezone');
 
-const sendEmail = require('../config/sendEmail');
+const SendEmail = require('../config/sendEmail');
 const create = async (req, res) => {
   const {
     guestFirstName,
@@ -192,7 +192,7 @@ const blockSchedules = async (req, res) => {
   const query = { _id: { $in: scheduleIds } };
   const templateId = '46ad4818b89153e76347eac8355ab9d8';
   try {
-    await sendEmail.sendEmailUsingSendPulse(recipients, subject, content, templateId);
+    await SendEmail.sendEmailUsingSendPulse(recipients, subject, content, templateId);
     await Appointment.deleteMany(query);
     res.status(200).json({ success: true });
   } catch (err) {
