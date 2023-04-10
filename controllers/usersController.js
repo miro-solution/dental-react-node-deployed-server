@@ -4,29 +4,10 @@ const jwt = require('jsonwebtoken');
 
 const config = process.env;
 const User = require('../models/User');
+const Dentist = require('../models/Dentist');
 const SendEmail = require('../config/sendEmail');
-//function to verify token
-async function verifyToken(token) {
-  try {
-    const ticket = await oauth2Client.verifyIdToken({
-      idToken: token,
-      audience: process.env.CLIENT_ID,
-    });
+const dialogflow = require('@google-cloud/dialogflow');
 
-    const payload = ticket.getPayload();
-    //second verification of token
-    if (
-      payload.aud !== process.env.CLIENT_ID ||
-      (payload.iss !== 'accounts.google.com' && payload.iss !== 'https://accounts.google.com')
-    ) {
-      throw 'Token is not from client or issued by Google';
-    }
-
-    return payload;
-  } catch (err) {
-    console.error(err);
-  }
-}
 const emailVerify = async (req, res) => {
   const verificationCode = Math.floor(Math.random() * 9000) + 1000;
   try {
@@ -54,8 +35,8 @@ const emailVerify = async (req, res) => {
     res.status(404).json({ success: false });
   }
 };
+
 const checkVerificationCode = async (req, res) => {
-  console.log(req.user);
   try {
     const userId = req.user._id;
     const user = await User.findOne({ _id: userId });
@@ -70,6 +51,7 @@ const checkVerificationCode = async (req, res) => {
     res.status(400).send('Ungültige Anmeldeinformationen');
   }
 };
+
 const resetPassword = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -82,11 +64,11 @@ const resetPassword = async (req, res) => {
     res.status(400).send('Ungültige Anmeldeinformationen');
   }
 };
+
 const userRegister = async (req, res) => {
   try {
     // Get user input
     const { name, email, password, phone } = req.body;
-    console.log(req.body);
 
     // Validate user input
     if (!(email && password && name)) {
@@ -110,6 +92,7 @@ const userRegister = async (req, res) => {
       password: encryptedPassword,
       subscriber: false,
       role: 'user',
+      // meetings: [],
       meetings: [{ meetingName: '60min meeting', duration: 60 }],
     });
 
@@ -164,7 +147,6 @@ const readUsers = async (req, res) => {
     // console.log(user);
     res.status(200).json({ docs: users });
   } catch (err) {
-    console.error(err);
     res.status(400).send(err);
   }
 };
@@ -176,7 +158,6 @@ const getUser = async (req, res) => {
     const user = await User.findOne({ _id: sub });
     res.status(200).json(user);
   } catch (err) {
-    console.error(err);
     res.status(400).send(err);
   }
 };
@@ -218,7 +199,6 @@ const updateUser = async (req, res) => {
 
     res.status(200).send('User profile updated');
   } catch (err) {
-    console.error(err);
     res.status(400).send(err);
   }
 };
@@ -243,14 +223,12 @@ const AfterUpdateProfile = async (req, res) => {
 
     res.status(200).json({ doc: newUser });
   } catch (err) {
-    console.error(err);
     res.status(400).send(err);
   }
 };
 
 const createMeetings = async (req, res) => {
   const sub = req.params.id;
-
   try {
     const user = await User.findOne({ _id: sub });
     // const isOnly = user.meetings.filter((meeting) => meeting.meetingName == req.body.meetingName);
@@ -261,14 +239,12 @@ const createMeetings = async (req, res) => {
     res.status(200).json({ docs: newUser.meetings });
     // } else res.status(400).send('Meeting Duplicate');
   } catch (err) {
-    console.error(err);
     res.status(400).send(err);
   }
 };
 const deleteMeetings = async (req, res) => {
   const sub = req.query.user;
   const deletedId = req.query.id;
-  console.log(sub, deletedId);
   try {
     const user = await User.findOne({ _id: sub });
     user.meetings = user.meetings.filter((meeting) => meeting._id != deletedId);
@@ -278,50 +254,115 @@ const deleteMeetings = async (req, res) => {
     const deletedUser = await User.findOne({ _id: sub });
     res.status(200).json({ docs: deletedUser.meetings });
   } catch (err) {
-    console.log(err);
     res.status(400).send(err);
   }
 };
 const updateMeetings = async (req, res) => {
   const sub = req.query.user;
   const id = req.query.id;
-  const user = await User.findOne({ _id: sub });
-
-  const isOnly = user.meetings.filter((meeting) => meeting.meetingName == req.body.meetingName);
   try {
-    if (isOnly.length === 0) {
-      user.meetings = user.meetings.map((meeting) =>
-        meeting._id == id
-          ? { _id: meeting._id, meetingName: req.body.meetingName, duration: req.body.duration }
-          : meeting,
-      );
+    const user = await User.findOne({ _id: sub });
+    const meetingIndex = user.meetings.findIndex((meeting) => meeting._id == id);
+    console.log(user, meetingIndex, id, user.meetings[meetingIndex]);
+    user.meetings[meetingIndex] = req.body;
+    await user.save();
+    const newUser = await User.findOne({ _id: sub });
+    res.status(200).json({ doc: newUser });
+  } catch (err) {
+    res.status(404).send(err);
+  }
+};
 
-      await user.save();
-      const updatedUser = await User.findOne({ _id: sub });
-      res.status(200).json({ docs: updatedUser.meetings });
-    } else if (isOnly.length === 1) {
-    } else {
-      res.status(403).send('Meeting Duplicate');
-    }
+const getDentists = async (req, res) => {
+  const sub = req.params.sub;
+  try {
+    const dentists = await Dentist.find({ userId: sub });
+    const primaryDentist = await User.findOne({ _id: sub });
+    // console.log(primaryDentist);
+    dentists.unshift({ name: primaryDentist.fullName, _id: primaryDentist._id, email: primaryDentist.email });
+    console.log(dentists);
+    res.status(200).json({ docs: dentists });
   } catch (err) {
     console.log(err);
-    res.status(400).send(err);
+    res.status(404).send(err);
+  }
+};
+
+const updateDentist = async (req, res) => {
+  const _id = req.params._id;
+  try {
+    const dentist = await Dentist.findOne({ _id: _id });
+    dentist.name = req.body.name;
+    dentist.email = req.body.email;
+    dentist.phoneNumber = req.body.phoneNumber;
+    // dentist = req.body;
+    await dentist.save();
+    const savedDentist = await Dentist.findOne({ _id: _id });
+    res.status(200).json({ doc: savedDentist });
+  } catch (err) {
+    res.status(404).send(err);
+  }
+};
+const deleteDentist = async (req, res) => {
+  const _id = req.params._id;
+  try {
+    const dentist = Dentist.findOne({ _id: _id });
+    await dentist.remove();
+    res.status(200).json({ success: true });
+  } catch (err) {
+    res.status(404).send(err);
+  }
+};
+
+const addDentist = async (req, res) => {
+  try {
+    const newDentist = new Dentist(req.body);
+    await newDentist.save();
+    res.status(200).json({ doc: newDentist });
+  } catch (err) {
+    console.log(err);
+    res.status(404).send(err);
+  }
+};
+
+const getItentListFromDialogFlow = async (req, res) => {
+  try {
+    const intentsClient = new dialogflow.IntentsClient({
+      keyFilename: './google_creds.json',
+    });
+    const projectAgentPath = intentsClient.projectAgentPath(process.env.DIALOGFLOW_PROJECT_ID);
+
+    const request = {
+      parent: projectAgentPath,
+    };
+
+    const [response] = await intentsClient.listIntents(request);
+
+    res.status(200).send(response);
+  } catch (err) {
+    console.log(err);
+    res.status(404).send(err);
   }
 };
 
 module.exports = {
-  userRegister,
-  userLogin,
   getUser,
-  readUsers,
-  getUserByUrl,
   isUnique,
+  userLogin,
+  readUsers,
+  addDentist,
   updateUser,
+  emailVerify,
+  getDentists,
+  userRegister,
+  getUserByUrl,
+  resetPassword,
+  updateDentist,
+  deleteDentist,
   createMeetings,
   updateMeetings,
   deleteMeetings,
   AfterUpdateProfile,
-  emailVerify,
-  resetPassword,
   checkVerificationCode,
+  getItentListFromDialogFlow,
 };

@@ -1,21 +1,25 @@
 const express = require('express');
+
 const router = express.Router();
-const usersController = require('../controllers/usersController');
 const auth = require('../utils/auth');
+const usersController = require('../controllers/usersController');
+
 //need text middleware to parse plain text token
 router.post('/login', express.text(), usersController.userLogin);
 router.post('/register', express.text(), usersController.userRegister);
 
 //check for unique url
-router.get('/uniqueUrl', usersController.isUnique);
 router.get('', usersController.readUsers);
+router.get('/uniqueUrl', usersController.isUnique);
 
 //gets user info by id
-//May not be necessary
 router.get('/:id', usersController.getUser);
 
 //get user info from public calendar route
 router.get('/:url/:eventDuration', usersController.getUserByUrl);
+
+//get itent list from dialogflow
+router.get('/dialogflow/intent/get_intent_list', usersController.getItentListFromDialogFlow);
 
 router.put('/profile/:id', usersController.updateUser);
 router.put('/afterprofile/:id', usersController.AfterUpdateProfile);
@@ -28,5 +32,10 @@ router.delete('/meetings', usersController.deleteMeetings);
 router.post('/email_verify', usersController.emailVerify);
 router.post('/check_email_verification_code', auth, usersController.checkVerificationCode);
 router.post('/reset-pass', auth, usersController.resetPassword);
+
+// router.get('/dentist/:sub', usersController.getDentists);
+// router.post('/dentist/:_id', usersController.addDentist);
+// router.put('/dentist/:_id', usersController.updateDentist);
+// router.delete('/dentist/:_id', usersController.deleteDentist);
 
 module.exports = router;

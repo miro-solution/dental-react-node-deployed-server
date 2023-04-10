@@ -59,8 +59,9 @@ const userSchema = new Schema({
   // meetings: [{ duration: Number, meetingName: String }],
   meetings: [
     {
+      dentist: { type: Schema.Types.ObjectId },
       duration: { type: Number },
-      repeat: { tyep: Number },
+      repeat: { type: Number },
       startDate: { type: String },
       startTime: { type: String },
       endTime: { type: String },

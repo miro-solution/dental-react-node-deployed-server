@@ -15,7 +15,7 @@ const create = async (req, res) => {
     meetTime,
     apptTime,
     url,
-    dentist,
+    dentistId,
     guestBirthday,
     guestAgreeRule,
     guestPatientType,
@@ -40,7 +40,7 @@ const create = async (req, res) => {
       meetingName: meetingName,
       meetTime: meetTime,
       apptTime: apptTime,
-      dentist: dentist,
+      dentistId: dentistId,
     });
     const eventTime = `${moment(apptTime).tz(user.timezone).format('h:mma - dddd, MMMM Do YYYY')}
     (${user.timezone.replace('_', ' ')} GMT${moment.tz(user.timezone).format('Z')})`;
@@ -173,7 +173,7 @@ const deleteAppointmentType = async (req, res) => {
 };
 
 const blockSchedules = async (req, res) => {
-  const userId = req.body.userId;
+  const userId = req.body.dentistId;
   const scheduleIds = req.body.schduleIds ? req.body.schduleIds : [];
   const content = req.body.content;
   const Sender = await User.findOne({ _id: userId });

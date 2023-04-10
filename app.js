@@ -11,6 +11,7 @@ const appointmentRouter = require('./routes/appointments');
 const appointmentTypeRouter = require('./routes/appointmentType');
 const availabilityRouter = require('./routes/availability');
 const subscriptionRouter = require('./routes/subscription');
+const dentistRouter = require('./routes/dentist');
 const auth = require('./utils/auth');
 
 const { json, urlencoded } = express;
@@ -44,6 +45,7 @@ app.use('/api/appointmenttype', appointmentTypeRouter);
 
 app.use('/api/availability', availabilityRouter);
 app.use('/api/subscription', auth, subscriptionRouter);
+app.use('/api/dentist', dentistRouter);
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));

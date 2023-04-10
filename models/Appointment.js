@@ -46,7 +46,7 @@ const appointmentSchema = new Schema({
   googleId: {
     type: String,
   },
-  dentist: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  dentistId: { type: Schema.Types.ObjectId, required: true },
   // eventSchedule: { type: Schema.Types.ObjectId, ref: 'AppointmentType', required: true },
 });
 
