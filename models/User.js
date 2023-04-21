@@ -23,10 +23,10 @@ const userSchema = new Schema({
   customerId: {
     type: String,
   },
-  given_name: {
+  address: {
     type: String,
   },
-  family_name: {
+  about_me: {
     type: String,
   },
   subscriber: {
@@ -59,7 +59,8 @@ const userSchema = new Schema({
   // meetings: [{ duration: Number, meetingName: String }],
   meetings: [
     {
-      dentist: { type: Schema.Types.ObjectId },
+      color: { type: String },
+      dentist: { type: Schema.Types.ObjectId, ref: 'Dentist' },
       duration: { type: Number },
       repeat: { type: Number },
       startDate: { type: String },

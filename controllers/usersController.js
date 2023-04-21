@@ -92,7 +92,7 @@ const userRegister = async (req, res) => {
       password: encryptedPassword,
       subscriber: false,
       role: 'user',
-      // meetings: [],
+      url: 'https://localhost:8000/' + name,
       meetings: [{ meetingName: '60min meeting', duration: 60 }],
     });
 
@@ -140,6 +140,7 @@ const userLogin = async (req, res) => {
     res.status(400).send('Ungültige Anmeldeinformationen');
   }
 };
+
 const readUsers = async (req, res) => {
   try {
     const users = await User.find({}, { fullName: 1, _id: 1, phone: 1 });
@@ -155,7 +156,7 @@ const getUser = async (req, res) => {
   const sub = req.params.id;
 
   try {
-    const user = await User.findOne({ _id: sub });
+    const user = await User.findOne({ _id: sub }).populate('meetings.dentist');
     res.status(200).json(user);
   } catch (err) {
     res.status(400).send(err);
@@ -197,7 +198,7 @@ const updateUser = async (req, res) => {
 
     await user.save();
 
-    res.status(200).send('User profile updated');
+    res.status(200).json(user);
   } catch (err) {
     res.status(400).send(err);
   }
@@ -210,15 +211,19 @@ const AfterUpdateProfile = async (req, res) => {
     user.email = req.body.email;
     user.timeZone = req.body.timezone;
     user.fullName = req.body.fullName;
-    if (req.body.password !== '') {
-      encryptedPassword = await bcrypt.hash(req.body.password, 10);
-      user.password = encryptedPassword;
-    }
+    // if (req.body.password !== '') {
+    //   encryptedPassword = await bcrypt.hash(req.body.password, 10);
+    //   user.password = encryptedPassword;
+    // }
 
     user.availability.days = req.body.availability.days;
     user.availability.hours = req.body.availability.hours;
     user.phone = parseInt(req.body.phone);
+    user.address = req.body.address;
+    user.about_me = req.body.about_me;
+
     await user.save();
+
     const newUser = await User.findOne({ _id: sub });
 
     res.status(200).json({ doc: newUser });
