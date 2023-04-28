@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "katty-agent-dlhu",
+  "private_key_id": "27d1badbc4df9927002f3d7a4a0893ae09c06198",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQCz1NKJTh7B0CZs\n3JlpP4/lUrLZwEVcHmfBjZ8sY0V4dU/sfdxXVqvrUvpZAhhpf6gfGgbDmQCtCRjH\nqS3WEbb0uicLeggyFXzjkaUlZ7WscmIGjWw920yOK0E3H2RmVhrJTv+HMur36obf\nQW2A+cFA4WpxZbn+8Jrq1AMggob3FJG8JQEmnd0Pr8yfGkM7oSMqVP5lTFhIfceG\nZx5lULxN1KbBpuMsdInh+5PLjzRIxUpkiHoZRY3l+GJVIs4XAFJaHBjl/WbXQZu1\nDqShWB/T++NwbFVbZFj1y7VGeadTskx4EK6NEb61D8sjtyBpmfuk/0pUH0bsTJfu\nDb+O5oI1AgMBAAECggEAD1ghfsXDqhXwsWlBTdG2nYKo8BuPz4RopgNHiaoOy3B3\nGV7D5k/m63VxFxcurhHObpjx6s6rWBhmnOK6noF0cv1PR5NqD5v1xBUxWje3MLex\n1Y1LpxuHNLpMHj/3eSPvtS2gcBDQK8c/Kt2SUmb9LmQNiQ99B1vQXCkq+yMoEPzz\nodCB8a4C04EVqSMGzpRVQuYWmCkyQfAEyqDe2vr/rj0KxYgHG0YWSXXyIEVqiOWr\n1ZKbr/pr56TcOuPwmircDQ0zKOtidgCSLuXvbvfdur/nE1r0No0VjXfH729W/McQ\n8aqpAgM9G9xiQqSkyTebR80ulzcgPhZdmVm0+qkKAQKBgQDkpgVzFqvqjcISsmdY\ntQMrF10ffAYtCGTZWEHw/THcBKNw8PcXcwuuCUS6k/8ohhq432C1w00YwqY+ZByi\noc8QWBlWXXuNeEkJDAmtrsewQtNc5Bim5aVDwjp5gVWhXtE82FNTfVy6U4RkIohi\nmzu4Q/X5+joDTELxJecoeJ2MhQKBgQDJV9tDP+ydGtY71lOyawFo6RBXHgWZtevw\n/S0qqrDiD3oLlH7ft1c1OqwQO/p+Go3JCiu85IYDgoHwrf6vY9IeHuLjNuckYtxd\nNr90tW9CZmq7Ix+yDazzBkaj0UJ+QpxQDFjiWvUmHbjm3bUtPYDZkEKFQRiP7hwp\nLOXXtg4l8QKBgQCuEaqSbI8i+RrnqwQ8p0mrM5VEk+ILxJkqUiOZeNjNfIaFRB2I\nr6ATtaCqPmOBkV6kogJ5Ph7im8V+OC8IrRD7i2Z2tqKKGCnaBl0T6bzCdo186XXP\nEYOYqzRjLlBnkszOeo4tQIIoo85lgVi9YRq89Jg93/7sZdGMzuNFj1W6FQKBgQCb\nN5K+Hlqvps+/Y3Q0mI+GrB2/u1I/9GJG7zbRrLMeIyZIJRtGJlYhn/Cjt0ldy+TA\nNooPXfD+Za78t3YfCgoi1Fa/KUU55MjTR3CDbZevDbt8NxCpOCe7VnxAsALdyUYt\n48bmAY756nHv8L1Keh6KGs9dYRipZLvq9kTebegsUQKBgQCrvbDWIauGiaMHsM24\n/hGf/5ds2GTd5Xs5fwjoFqyWDSB0WvxEYkc6A02QzLmzStFBtXU94aYz9mQ3tRc1\nVS/QwXjO24Xfk5PLcW0yFPiMwbMUtQicsNRJzT1VKOfrefgSsuFlYpuE6WOJq6ae\n79LZ4+GwX2BUKNd8zwcTUSWUlA==\n-----END PRIVATE KEY-----\n",
+  "client_email": "dialogflow-integrations@katty-agent-dlhu.iam.gserviceaccount.com",
+  "client_id": "106797852336801105109",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/dialogflow-integrations%40katty-agent-dlhu.iam.gserviceaccount.com"
+}
