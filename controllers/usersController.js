@@ -333,7 +333,7 @@ const addDentist = async (req, res) => {
 const getItentListFromDialogFlow = async (req, res) => {
   try {
     const intentsClient = new dialogflow.IntentsClient({
-      keyFilename: '../backend/google_creds.json',
+      keyFilename: './google_creds.json',
     });
     const projectAgentPath = intentsClient.projectAgentPath(process.env.DIALOGFLOW_PROJECT_ID);
 
