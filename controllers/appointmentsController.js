@@ -4,64 +4,36 @@ const User = require('../models/User');
 const moment = require('moment-timezone');
 
 const SendEmail = require('../config/sendEmail');
+
 const create = async (req, res) => {
   const {
+    userId,
     guestFirstName,
     guestLastName,
-    guestEmail,
-    guestComment,
-    guestTz,
+    guestMobile,
     meetingName,
-    meetTime,
+    meetDate,
     apptTime,
-    url,
     dentistId,
     guestBirthday,
-    guestAgreeRule,
-    guestPatientType,
   } = req.body;
-  console.log(req.body);
-  const endTime = moment(apptTime).add(meetTime, 'm').format();
 
   try {
-    const user = await User.findOne({ url });
-
     const newAppointment = new Appointment({
-      user: user._id,
-      userTz: user.timezone,
+      user: userId,
       guestFirstName: guestFirstName,
       guestLastName: guestLastName,
       guestBirthday: guestBirthday,
-      guestAgreeRule: guestAgreeRule,
-      guestEmail: guestEmail,
-      guestComment: guestComment,
-      guestTz: guestTz,
-      guestPatientType: guestPatientType,
+      guestMobile: guestMobile,
       meetingName: meetingName,
-      meetTime: meetTime,
+      meetDate: meetDate,
       apptTime: apptTime,
       dentistId: dentistId,
     });
-    const eventTime = `${moment(apptTime).tz(user.timezone).format('h:mma - dddd, MMMM Do YYYY')}
-    (${user.timezone.replace('_', ' ')} GMT${moment.tz(user.timezone).format('Z')})`;
-    try {
-      await newAppointment.save();
 
-      // await emailUserNewAppt(
-      //   user.email,
-      //   user.given_name,
-      //   guestName,
-      //   guestEmail,
-      //   guestTz.replace('_', ' '),
-      //   guestComment,
-      //   meetingName,
-      //   eventTime,
-      // );
+    await newAppointment.save();
 
-      res.status(201).send('New event created');
-    } catch (err) {
-      res.status(500).json(err);
-    }
+    res.status(201).send('New event created');
   } catch (err) {
     res.status(400).json(err);
   }
