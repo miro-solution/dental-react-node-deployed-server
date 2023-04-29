@@ -75,15 +75,15 @@ const userRegister = async (req, res) => {
       res.status(400).send('Alle Eingaben sind erforderlich.');
     }
 
-    const oldUser = await User.findOne({ email });
+    // const oldUser = await User.findOne({ email: email });
 
-    if (oldUser) {
-      return res.status(409).send('Benutzer existiert bereits. Bitte loggen Sie sich ein.');
-    }
+    // if (oldUser) {
+    //   return res.status(409).send('Benutzer existiert bereits. Bitte loggen Sie sich ein.');
+    // }
 
     //Encrypt user password
     encryptedPassword = await bcrypt.hash(password, 10);
-    
+
     // Create user in our database
     const user = await User.create({
       fullName: name,
@@ -106,6 +106,7 @@ const userRegister = async (req, res) => {
     // return new user
     res.status(201).json(user);
   } catch (err) {
+    return res.status(409).send('Benutzer existiert bereits. Bitte loggen Sie sich ein.');
     console.log(err);
   }
 };
