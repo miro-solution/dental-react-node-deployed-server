@@ -75,11 +75,11 @@ const userRegister = async (req, res) => {
       res.status(400).send('Alle Eingaben sind erforderlich.');
     }
 
-    // const oldUser = await User.findOne({ email: email });
+    const oldUser = await User.findOne({ email });
 
-    // if (oldUser) {
-    //   return res.status(409).send('Benutzer existiert bereits. Bitte loggen Sie sich ein.');
-    // }
+    if (oldUser) {
+      return res.status(409).send('Benutzer existiert bereits. Bitte loggen Sie sich ein.');
+    }
 
     //Encrypt user password
     encryptedPassword = await bcrypt.hash(password, 10);
@@ -106,7 +106,6 @@ const userRegister = async (req, res) => {
     // return new user
     res.status(201).json(user);
   } catch (err) {
-    return res.status(409).send('Benutzer existiert bereits. Bitte loggen Sie sich ein.');
     console.log(err);
   }
 };
@@ -266,13 +265,11 @@ const deleteMeetings = async (req, res) => {
 const updateMeetings = async (req, res) => {
   const sub = req.query.user;
   const id = req.query.id;
-  console.log(req.body);
   try {
     const user = await User.findOne({ _id: sub });
     const meetingIndex = user.meetings.findIndex((meeting) => meeting._id == id);
-    console.log(user, meetingIndex, id, user.meetings[meetingIndex], '=====================');
+    console.log(user, meetingIndex, id, user.meetings[meetingIndex]);
     user.meetings[meetingIndex] = req.body;
-    // const newUser = await User.findByIdAndUpdate({ _id: sub }, req.body, { new: true });
     await user.save();
     const newUser = await User.findOne({ _id: sub });
     res.status(200).json({ doc: newUser });
@@ -336,7 +333,7 @@ const addDentist = async (req, res) => {
 const getItentListFromDialogFlow = async (req, res) => {
   try {
     const intentsClient = new dialogflow.IntentsClient({
-      keyFilename: '../backend/google_creds.json',
+      keyFilename: './google_creds.json',
     });
     const projectAgentPath = intentsClient.projectAgentPath(process.env.DIALOGFLOW_PROJECT_ID);
 

@@ -8,7 +8,6 @@ const userSchema = new Schema({
   email: {
     type: String,
     required: true,
-    unique: true,
   },
   phone: {
     type: Number,
@@ -72,13 +71,13 @@ const userSchema = new Schema({
       expiredTime: { type: Number },
       allDay: { type: Boolean },
       days: {
-        monday: { type: Boolean, default: true },
-        tuesday: { type: Boolean, default: true },
-        wednesday: { type: Boolean, default: true },
-        thursday: { type: Boolean, default: true },
-        friday: { type: Boolean, default: true },
-        saturday: { type: Boolean, default: false },
-        sunday: { type: Boolean, default: false },
+        Monday: { type: Boolean, default: true },
+        Tuesday: { type: Boolean, default: true },
+        Wednesday: { type: Boolean, default: true },
+        Thursday: { type: Boolean, default: true },
+        Friday: { type: Boolean, default: true },
+        Saturday: { type: Boolean, default: false },
+        Sunday: { type: Boolean, default: false },
       },
     },
   ],

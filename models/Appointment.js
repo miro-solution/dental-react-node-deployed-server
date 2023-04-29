@@ -4,6 +4,10 @@ const Schema = mongoose.Schema;
 
 const appointmentSchema = new Schema({
   user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  userTz: {
+    type: String,
+    required: true,
+  },
   guestFirstName: {
     type: String,
     required: true,
@@ -16,19 +20,27 @@ const appointmentSchema = new Schema({
     type: String,
     required: true,
   },
-  guestMobile: {
+  guestEmail: {
     type: String,
+    required: true,
+  },
+  guestComment: {
+    type: String,
+  },
+  guestTz: {
+    type: String,
+    required: true,
   },
   meetingName: {
     type: String,
     required: true,
   },
-  meetDate: {
-    type: Date,
+  meetTime: {
+    type: Number,
     required: true,
   },
   apptTime: {
-    type: String,
+    type: Date,
     required: true,
   },
   googleId: {

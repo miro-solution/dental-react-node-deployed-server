@@ -40,12 +40,12 @@ app.use(
 );
 
 app.use('/api/user', userRouter);
-app.use('/api/appointments', auth, appointmentRouter);
-app.use('/api/appointmenttype', auth, appointmentTypeRouter);
+app.use('/api/appointments', appointmentRouter);
+app.use('/api/appointmenttype', appointmentTypeRouter);
 
-app.use('/api/availability', auth, availabilityRouter);
+app.use('/api/availability', availabilityRouter);
 app.use('/api/subscription', auth, subscriptionRouter);
-app.use('/api/dentist', auth, dentistRouter);
+app.use('/api/dentist', dentistRouter);
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
@@ -61,7 +61,7 @@ app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-  console.log(err);
+
   // render the error page
   res.status(err.status || 500);
   res.json({ error: err });
