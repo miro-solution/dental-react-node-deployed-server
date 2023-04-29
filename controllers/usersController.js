@@ -83,7 +83,7 @@ const userRegister = async (req, res) => {
 
     //Encrypt user password
     encryptedPassword = await bcrypt.hash(password, 10);
-
+    
     // Create user in our database
     const user = await User.create({
       fullName: name,
@@ -265,11 +265,13 @@ const deleteMeetings = async (req, res) => {
 const updateMeetings = async (req, res) => {
   const sub = req.query.user;
   const id = req.query.id;
+  console.log(req.body);
   try {
     const user = await User.findOne({ _id: sub });
     const meetingIndex = user.meetings.findIndex((meeting) => meeting._id == id);
-    console.log(user, meetingIndex, id, user.meetings[meetingIndex]);
+    console.log(user, meetingIndex, id, user.meetings[meetingIndex], '=====================');
     user.meetings[meetingIndex] = req.body;
+    // const newUser = await User.findByIdAndUpdate({ _id: sub }, req.body, { new: true });
     await user.save();
     const newUser = await User.findOne({ _id: sub });
     res.status(200).json({ doc: newUser });

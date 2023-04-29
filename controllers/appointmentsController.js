@@ -52,7 +52,7 @@ const cancel = async (req, res) => {
 const userIndex = async (req, res) => {
   try {
     const resp = await Appointment.find({ user: req.params.user_id }).populate('dentist');
-
+    console.log('upcoming');
     //sort resp by apptTime
     resp.sort((a, b) => {
       return a.apptTime - b.apptTime;
@@ -98,7 +98,6 @@ const userIndexForScheduleView = async (req, res) => {
 
 const readAppointmentTypes = async (req, res) => {
   const subscribe = req.query.subscribe;
-  console.log(subscribe, '+++++++++');
   try {
     if (subscribe === 'a') {
       const allAppointmentTypes = await AppointmentType.find({});
