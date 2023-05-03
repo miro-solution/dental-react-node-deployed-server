@@ -44,7 +44,7 @@ app.use('/api/appointments', appointmentRouter);
 app.use('/api/appointmenttype', appointmentTypeRouter);
 
 app.use('/api/availability', availabilityRouter);
-app.use('/api/subscription', auth, subscriptionRouter);
+app.use('/api/subscription', subscriptionRouter);
 app.use('/api/dentist', dentistRouter);
 
 app.get('*', (req, res) => {
@@ -59,9 +59,9 @@ app.use(function (req, res, next) {
 // error handler
 app.use(function (err, req, res, next) {
   // set locals, only providing error in development
+  console.log(err);
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
   // render the error page
   res.status(err.status || 500);
   res.json({ error: err });

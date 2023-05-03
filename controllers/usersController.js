@@ -9,7 +9,7 @@ const SendEmail = require('../config/sendEmail');
 const dialogflow = require('@google-cloud/dialogflow');
 
 const emailVerify = async (req, res) => {
-  const verificationCode = Math.floor(Math.random() * 9000) + 1000;
+  const verificationCode = Math.floor(Math.random() * 90000) + 10000;
   try {
     const user = await User.findOne({ email: req.body.email });
     const token = jwt.sign({ user_id: user._id, verificationCode: verificationCode }, process.env.TOKEN_KEY, {
@@ -41,7 +41,6 @@ const checkVerificationCode = async (req, res) => {
     const userId = req.user._id;
     const user = await User.findOne({ _id: userId });
     const decoded = jwt.verify(user.verificationCode, config.TOKEN_KEY);
-    console.log(decoded.verificationCode, req.body.code);
     if (parseInt(decoded.verificationCode) === parseInt(req.body.code)) {
       res.status(200).json({ success: true });
     } else {
