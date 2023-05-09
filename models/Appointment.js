@@ -16,7 +16,7 @@ const appointmentSchema = new Schema({
     type: String,
     required: true,
   },
-  guestMobile: {
+  guestContactAddress: {
     type: String,
   },
   meetingName: {

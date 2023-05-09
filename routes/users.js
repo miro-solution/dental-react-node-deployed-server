@@ -17,6 +17,7 @@ router.get('/:id', usersController.getUser);
 
 //get user info from public calendar route
 router.get('/:url/:eventDuration', usersController.getUserByUrl);
+router.get('/get_appoitmentTypes', usersController.getAllAppointmentsTypes);
 
 //get itent list from dialogflow
 router.get('/dialogflow/intent/get_intent_list', usersController.getItentListFromDialogFlow);

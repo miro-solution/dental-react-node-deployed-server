@@ -11,7 +11,7 @@ const userSchema = new Schema({
     unique: true,
   },
   phone: {
-    type: Number,
+    type: String,
   },
   fullName: {
     type: String,
@@ -24,9 +24,12 @@ const userSchema = new Schema({
   customerId: {
     type: String,
   },
-  address: {
+  addressStreet: {
     type: String,
   },
+  addressNumber: { type: String },
+  addressPostalCode: { type: String },
+  addressCity: { type: String },
   about_me: {
     type: String,
   },

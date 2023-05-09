@@ -6,7 +6,7 @@ router.post('/', appointmentsController.create);
 router.post('/block', appointmentsController.blockSchedules);
 
 router.get('/:user_id', appointmentsController.userIndex);
-router.get('/get_appoitment/:user_id', appointmentsController.userIndexForScheduleView);
+router.get('/get_appointment/:user_id', appointmentsController.userIndexForScheduleView);
 
 router.delete('/:id', appointmentsController.cancel);
 

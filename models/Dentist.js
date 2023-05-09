@@ -11,7 +11,7 @@ const dentistSchema = new Schema(
     },
     email: { type: String, required: true },
     phoneNumber: {
-      type: Number,
+      type: String,
     },
   },
   {

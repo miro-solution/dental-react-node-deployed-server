@@ -87,11 +87,11 @@ const userRegister = async (req, res) => {
     const user = await User.create({
       fullName: name,
       email: email.toLowerCase(),
-      phone: parseInt(phone),
+      phone: phone,
       password: encryptedPassword,
       subscriber: false,
       role: 'user',
-      url: 'https://localhost:8000/' + name,
+      url: `https://dentoconnect/Zahnarztpraxis_Dr.${name.charAt(0).toUpperCase() + name.slice(1)}/`,
       meetings: [{ meetingName: '60min meeting', duration: 60 }],
     });
 
@@ -105,8 +105,8 @@ const userRegister = async (req, res) => {
     // return new user
     res.status(201).json(user);
   } catch (err) {
-    return res.status(409).send('Benutzer existiert bereits. Bitte loggen Sie sich ein.');
     console.log(err);
+    return res.status(409).send('Benutzer existiert bereits. Bitte loggen Sie sich ein.');
   }
 };
 
@@ -218,8 +218,11 @@ const AfterUpdateProfile = async (req, res) => {
 
     user.availability.days = req.body.availability.days;
     user.availability.hours = req.body.availability.hours;
-    user.phone = parseInt(req.body.phone);
-    user.address = req.body.address;
+    user.phone = req.body.phone;
+    user.addressStreet = req.body.addressStreet;
+    user.addressNumber = req.body.addressNumber;
+    user.addressPostalCode = req.body.addressPostalCode;
+    user.addressCity = req.body.addressCity;
     user.about_me = req.body.about_me;
 
     await user.save();
@@ -269,7 +272,6 @@ const updateMeetings = async (req, res) => {
   try {
     const user = await User.findOne({ _id: sub });
     const meetingIndex = user.meetings.findIndex((meeting) => meeting._id == id);
-    console.log(user, meetingIndex, id, user.meetings[meetingIndex], '=====================');
     user.meetings[meetingIndex] = req.body;
     // const newUser = await User.findByIdAndUpdate({ _id: sub }, req.body, { new: true });
     await user.save();
@@ -297,11 +299,13 @@ const getDentists = async (req, res) => {
 
 const updateDentist = async (req, res) => {
   const _id = req.params._id;
+  console.log(_id, req.body);
   try {
     const dentist = await Dentist.findOne({ _id: _id });
     dentist.name = req.body.name;
     dentist.email = req.body.email;
     dentist.phoneNumber = req.body.phoneNumber;
+    dentist.userId = req.body.userId;
     // dentist = req.body;
     await dentist.save();
     const savedDentist = await Dentist.findOne({ _id: _id });
@@ -323,7 +327,12 @@ const deleteDentist = async (req, res) => {
 
 const addDentist = async (req, res) => {
   try {
-    const newDentist = new Dentist(req.body);
+    const newDentist = new Dentist({
+      name: req.body.name,
+      email: req.body.email,
+      phoneNumber: req.body.phoneNumber,
+      userId: req.body.userId,
+    });
     await newDentist.save();
     res.status(200).json({ doc: newDentist });
   } catch (err) {
@@ -351,7 +360,7 @@ const getItentListFromDialogFlow = async (req, res) => {
     res.status(404).send(err);
   }
 };
-
+const getAllAppointmentsTypes = (req, res) => {};
 module.exports = {
   getUser,
   isUnique,
@@ -372,4 +381,5 @@ module.exports = {
   AfterUpdateProfile,
   checkVerificationCode,
   getItentListFromDialogFlow,
+  getAllAppointmentsTypes,
 };
