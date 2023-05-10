@@ -13,6 +13,10 @@ const dentistSchema = new Schema(
     phoneNumber: {
       type: String,
     },
+    role: {
+      type: String,
+      default: 'dentist',
+    },
   },
   {
     timestamps: {

@@ -92,7 +92,7 @@ const userRegister = async (req, res) => {
       subscriber: false,
       role: 'user',
       url: `https://dentoconnect/Zahnarztpraxis_Dr.${name.charAt(0).toUpperCase() + name.slice(1)}/`,
-      meetings: [{ meetingName: '60min meeting', duration: 60 }],
+      // meetings: [{ meetingName: '60min meeting', duration: 60 }],
     });
 
     // Create token
@@ -101,6 +101,13 @@ const userRegister = async (req, res) => {
     });
     // save user token
     user.access_token = token;
+    await Dentist.create({
+      name: name,
+      email: email.toLowerCase(),
+      phoneNumber: phone,
+      role: 'doctor',
+      userId: user._id,
+    });
 
     // return new user
     res.status(201).json(user);
@@ -228,6 +235,11 @@ const AfterUpdateProfile = async (req, res) => {
     await user.save();
 
     const newUser = await User.findOne({ _id: sub });
+    const dentist = await Dentist.findOne({ userId: sub });
+    dentist.name = req.body.fullName;
+    dentist.email = req.body.email;
+    dentist.phoneNumber = req.body.phone;
+    dentist.save();
 
     res.status(200).json({ doc: newUser });
   } catch (err) {
@@ -286,10 +298,10 @@ const getDentists = async (req, res) => {
   const sub = req.params.sub;
   try {
     const dentists = await Dentist.find({ userId: sub });
-    const primaryDentist = await User.findOne({ _id: sub });
-    // console.log(primaryDentist);
-    dentists.unshift({ name: primaryDentist.fullName, _id: primaryDentist._id, email: primaryDentist.email });
-    console.log(dentists);
+    // const primaryDentist = await User.findOne({ _id: sub });
+    // // console.log(primaryDentist);
+    // dentists.unshift({ name: primaryDentist.fullName, _id: primaryDentist._id, email: primaryDentist.email });
+    // console.log(dentists);
     res.status(200).json({ docs: dentists });
   } catch (err) {
     console.log(err);
