@@ -7,11 +7,6 @@ const User = require('../models/User');
 const Dentist = require('../models/Dentist');
 const SendEmail = require('../config/sendEmail');
 const dialogflow = require('@google-cloud/dialogflow');
-const twilio = require('twilio');
-
-const accountSid = 'ACc725307a31d6beec20ddd74c5131c2f5';
-const authToken = '87321d0b8519aa0a192849b254624ff6';
-const client = new twilio(accountSid, authToken);
 
 const emailVerify = async (req, res) => {
   const verificationCode = Math.floor(Math.random() * 90000) + 10000;
