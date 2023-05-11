@@ -1,12 +1,17 @@
 const _ = require('lodash');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-
+const gravatar = require('gravatar');
 const config = process.env;
 const User = require('../models/User');
 const Dentist = require('../models/Dentist');
 const SendEmail = require('../config/sendEmail');
 const dialogflow = require('@google-cloud/dialogflow');
+const twilio = require('twilio');
+
+const accountSid = 'ACc725307a31d6beec20ddd74c5131c2f5';
+const authToken = '87321d0b8519aa0a192849b254624ff6';
+const client = new twilio(accountSid, authToken);
 
 const emailVerify = async (req, res) => {
   const verificationCode = Math.floor(Math.random() * 90000) + 10000;
@@ -90,6 +95,7 @@ const userRegister = async (req, res) => {
       phone: phone,
       password: encryptedPassword,
       subscriber: false,
+      avatarUrl: gravatar.url(email, { s: '200', r: 'pg', d: 'mp' }),
       role: 'user',
       url: `https://dentoconnect/Zahnarztpraxis_Dr.${name.charAt(0).toUpperCase() + name.slice(1)}/`,
       // meetings: [{ meetingName: '60min meeting', duration: 60 }],
@@ -107,6 +113,7 @@ const userRegister = async (req, res) => {
       phoneNumber: phone,
       role: 'doctor',
       userId: user._id,
+      avatarURL: gravatar.url(email, { s: '200', r: 'pg', d: 'mp' }),
     });
 
     // return new user
@@ -222,7 +229,7 @@ const AfterUpdateProfile = async (req, res) => {
     //   encryptedPassword = await bcrypt.hash(req.body.password, 10);
     //   user.password = encryptedPassword;
     // }
-
+    user.avatarUrl = gravatar.url(req.body.email, { s: '200', r: 'pg', d: 'mp' });
     user.availability.days = req.body.availability.days;
     user.availability.hours = req.body.availability.hours;
     user.phone = req.body.phone;
@@ -239,6 +246,7 @@ const AfterUpdateProfile = async (req, res) => {
     dentist.name = req.body.fullName;
     dentist.email = req.body.email;
     dentist.phoneNumber = req.body.phone;
+    dentist.avatarURL = gravatar.url(req.body.email, { s: '200', r: 'pg', d: 'mp' });
     dentist.save();
 
     res.status(200).json({ doc: newUser });
@@ -318,6 +326,7 @@ const updateDentist = async (req, res) => {
     dentist.email = req.body.email;
     dentist.phoneNumber = req.body.phoneNumber;
     dentist.userId = req.body.userId;
+    dentist.avatarURL = gravatar.url(req.body.email, { s: '200', r: 'pg', d: 'mp' });
     // dentist = req.body;
     await dentist.save();
     const savedDentist = await Dentist.findOne({ _id: _id });
@@ -338,12 +347,23 @@ const deleteDentist = async (req, res) => {
 };
 
 const addDentist = async (req, res) => {
+  const user = User.findOne({ _id: req.user.id });
   try {
+    // client.messages
+    //   .create({
+    //     body: `Doctor ${user.fullName} has registered and invited you as his dentist.!`,
+    //     from: '+18337687780',
+    //     to: '+19564165644',
+    //   })
+    //   .then((message) => res.send(`SMS sent with ID: ${message.sid}`))
+    //   .catch((error) => res.send(`Error sending SMS: ${error.message}`));
+
     const newDentist = new Dentist({
       name: req.body.name,
       email: req.body.email,
       phoneNumber: req.body.phoneNumber,
       userId: req.body.userId,
+      avatarURL: gravatar.url(req.body.email, { s: '200', r: 'pg', d: 'mp' }),
     });
     await newDentist.save();
     res.status(200).json({ doc: newDentist });

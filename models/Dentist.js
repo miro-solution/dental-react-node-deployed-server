@@ -13,6 +13,9 @@ const dentistSchema = new Schema(
     phoneNumber: {
       type: String,
     },
+    avatarURL: {
+      type: String,
+    },
     role: {
       type: String,
       default: 'dentist',
