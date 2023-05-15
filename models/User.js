@@ -28,11 +28,12 @@ const userSchema = new Schema({
     type: String,
   },
   addressStreet: {
-    type: String,
+    label: { type: String, default: '' },
+    secondaryLabel: { type: String, default: '' },
   },
-  addressNumber: { type: String },
-  addressPostalCode: { type: String },
-  addressCity: { type: String },
+  addressNumber: { label: { type: String, default: '' }, secondaryLabel: { type: String, default: '' } },
+  addressPostalCode: { label: { type: String, default: '' } },
+  addressCity: { label: { type: String, default: '' } },
   about_me: {
     type: String,
   },

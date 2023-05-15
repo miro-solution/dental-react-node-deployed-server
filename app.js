@@ -13,6 +13,7 @@ const availabilityRouter = require('./routes/availability');
 const subscriptionRouter = require('./routes/subscription');
 const dentistRouter = require('./routes/dentist');
 const patientRouter = require('./routes/patient');
+const googleRouter = require('./routes/google');
 const auth = require('./utils/auth');
 
 const { json, urlencoded } = express;
@@ -48,6 +49,7 @@ app.use('/api/availability', availabilityRouter);
 app.use('/api/subscription', subscriptionRouter);
 app.use('/api/dentist', dentistRouter);
 app.use('/api/patient', patientRouter);
+app.use('/api/google-map', googleRouter);
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));

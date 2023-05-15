@@ -8,6 +8,10 @@ const Dentist = require('../models/Dentist');
 const SendEmail = require('../config/sendEmail');
 const dialogflow = require('@google-cloud/dialogflow');
 
+const accountSid = 'ACc725307a31d6beec20ddd74c5131c2f5';
+const authToken = '87321d0b8519aa0a192849b254624ff6';
+const client = require('twilio')(accountSid, authToken);
+
 const emailVerify = async (req, res) => {
   const verificationCode = Math.floor(Math.random() * 90000) + 10000;
   try {
@@ -25,7 +29,6 @@ const emailVerify = async (req, res) => {
 
     await SendEmail.sendEmailUsingSendPulse(
       [{ name: user.name, email: user.email }],
-      // [{ name: 'yuanmai', email: 'yuanmai212@gmail.com' }],
       'Email Verification Code',
       verificationCode,
       templateId,
@@ -283,7 +286,6 @@ const deleteMeetings = async (req, res) => {
 const updateMeetings = async (req, res) => {
   const sub = req.query.user;
   const id = req.query.id;
-  console.log(req.body);
   try {
     const user = await User.findOne({ _id: sub });
     const meetingIndex = user.meetings.findIndex((meeting) => meeting._id == id);
@@ -314,7 +316,6 @@ const getDentists = async (req, res) => {
 
 const updateDentist = async (req, res) => {
   const _id = req.params._id;
-  console.log(_id, req.body);
   try {
     const dentist = await Dentist.findOne({ _id: _id });
     dentist.name = req.body.name;
@@ -344,24 +345,24 @@ const deleteDentist = async (req, res) => {
 const addDentist = async (req, res) => {
   const user = User.findOne({ _id: req.user.id });
   try {
-    // client.messages
-    //   .create({
-    //     body: `Doctor ${user.fullName} has registered and invited you as his dentist.!`,
-    //     from: '+18337687780',
-    //     to: '+19564165644',
-    //   })
-    //   .then((message) => res.send(`SMS sent with ID: ${message.sid}`))
-    //   .catch((error) => res.send(`Error sending SMS: ${error.message}`));
+    client.messages
+      .create({
+        body: `Doctor ${user.fullName} has registered and invited you as his dentist.!`,
+        from: '+18337687780',
+        to: '+491798291251',
+      })
+      .then((message) => res.send(`SMS sent with ID: ${message.sid}`))
+      .catch((error) => res.send(`Error sending SMS: ${error.message}`));
 
-    const newDentist = new Dentist({
-      name: req.body.name,
-      email: req.body.email,
-      phoneNumber: req.body.phoneNumber,
-      userId: req.body.userId,
-      avatarURL: gravatar.url(req.body.email, { s: '200', r: 'pg', d: 'mp' }),
-    });
-    await newDentist.save();
-    res.status(200).json({ doc: newDentist });
+    // const newDentist = new Dentist({
+    //   name: req.body.name,
+    //   email: req.body.email,
+    //   phoneNumber: req.body.phoneNumber,
+    //   userId: req.body.userId,
+    //   avatarURL: gravatar.url(req.body.email, { s: '200', r: 'pg', d: 'mp' }),
+    // });
+    // await newDentist.save();
+    // res.status(200).json({ doc: newDentist });
   } catch (err) {
     console.log(err);
     res.status(404).send(err);
