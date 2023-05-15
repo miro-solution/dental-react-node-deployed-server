@@ -8,9 +8,9 @@ const Dentist = require('../models/Dentist');
 const SendEmail = require('../config/sendEmail');
 const dialogflow = require('@google-cloud/dialogflow');
 
-const accountSid = 'ACc725307a31d6beec20ddd74c5131c2f5';
-const authToken = '87321d0b8519aa0a192849b254624ff6';
-const client = require('twilio')(accountSid, authToken);
+// const accountSid = 'ACc725307a31d6beec20ddd74c5131c2f5';
+// const authToken = '87321d0b8519aa0a192849b254624ff6';
+// const client = require('twilio')(accountSid, authToken);
 
 const emailVerify = async (req, res) => {
   const verificationCode = Math.floor(Math.random() * 90000) + 10000;
@@ -345,24 +345,23 @@ const deleteDentist = async (req, res) => {
 const addDentist = async (req, res) => {
   const user = User.findOne({ _id: req.user.id });
   try {
-    client.messages
-      .create({
-        body: `Doctor ${user.fullName} has registered and invited you as his dentist.!`,
-        from: '+18337687780',
-        to: '+491798291251',
-      })
-      .then((message) => res.send(`SMS sent with ID: ${message.sid}`))
-      .catch((error) => res.send(`Error sending SMS: ${error.message}`));
-
-    // const newDentist = new Dentist({
-    //   name: req.body.name,
-    //   email: req.body.email,
-    //   phoneNumber: req.body.phoneNumber,
-    //   userId: req.body.userId,
-    //   avatarURL: gravatar.url(req.body.email, { s: '200', r: 'pg', d: 'mp' }),
-    // });
-    // await newDentist.save();
-    // res.status(200).json({ doc: newDentist });
+    // client.messages
+    //   .create({
+    //     body: `Doctor ${user.fullName} has registered and invited you as his dentist.!`,
+    //     from: '+18337687780',
+    //     to: '+491798291251',
+    //   })
+    //   .then((message) => res.send(`SMS sent with ID: ${message.sid}`))
+    //   .catch((error) => res.send(`Error sending SMS: ${error.message}`));
+    const newDentist = new Dentist({
+      name: req.body.name,
+      email: req.body.email,
+      phoneNumber: req.body.phoneNumber,
+      userId: req.body.userId,
+      avatarURL: gravatar.url(req.body.email, { s: '200', r: 'pg', d: 'mp' }),
+    });
+    await newDentist.save();
+    res.status(200).json({ doc: newDentist });
   } catch (err) {
     console.log(err);
     res.status(404).send(err);
